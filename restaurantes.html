@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Escolher Restaurante 🍽️</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    li {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 5px;
+    }
+
+    #resultado {
+      margin-top: 25px;
+      font-size: 1.3em;
+      color: #222;
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      border-radius: 10px;
+      padding: 15px;
+      width: 90%;
+      max-width: 400px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍽️ Onde Jantar Hoje?</h1>
+
+  <div class="input-area">
+    <input type="text" id="nomeRestaurante" placeholder="Adicionar restaurante..." />
+    <button onclick="adicionarRestaurante()">➕</button>
+  </div>
+
+  <ul id="listaRestaurantes"></ul>
+
+  <button onclick="escolherRestaurante()">🎲 Escolher Aleatoriamente</button>
+  <div id="resultado"></div>
+
+  <script>
+    let restaurantes = JSON.parse(localStorage.getItem("restaurantes")) || [];
+
+    function atualizarLista() {
+      const lista = document.getElementById("listaRestaurantes");
+      lista.innerHTML = "";
+      restaurantes.forEach((r, i) => {
+        const li = document.createElement("li");
+        li.textContent = r;
+        li.onclick = () => removerRestaurante(i);
+        lista.appendChild(li);
+      });
+      localStorage.setItem("restaurantes", JSON.stringify(restaurantes));
+    }
+
+    function adicionarRestaurante() {
+      const nome = document.getElementById("nomeRestaurante").value.trim();
+      if (nome && !restaurantes.includes(nome)) {
+        restaurantes.push(nome);
+        atualizarLista();
+        document.getElementById("nomeRestaurante").value = "";
+      }
+    }
+
+    function removerRestaurante(i) {
+      if (confirm(`Remover "${restaurantes[i]}"?`)) {
+        restaurantes.splice(i, 1);
+        atualizarLista();
+      }
+    }
+
+    function escolherRestaurante() {
+      const resultado = document.getElementById("resultado");
+      if (restaurantes.length === 0) {
+        resultado.style.display = "block";
+        resultado.textContent = "Nenhum restaurante guardado!";
+        return;
+      }
+      const aleatorio = restaurantes[Math.floor(Math.random() * restaurantes.length)];
+      resultado.style.display = "block";
+      resultado.textContent = `🍴 Hoje vais a: ${aleatorio}!`;
+    }
+
+    atualizarLista();
+  </script>
+</body>
+</html>
